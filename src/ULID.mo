@@ -138,7 +138,7 @@ module {
 				r := r_;
 				bs;
 			} else {
-				let (bs, r_) = Array_.split<Nat8>(r, 8);
+				let (bs, r_) = Array_.split<Nat8>(r, n);
 				r := r_;
 				bs;
 			};
