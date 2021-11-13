@@ -3,9 +3,11 @@ import Array_ "mo:array/Array";
 import Binary "mo:encoding/Binary";
 import Blob "mo:base/Blob";
 import Int "mo:base/Int";
+import Nat8 "mo:base/Nat8";
 import Nat64 "mo:base/Nat64";
 import Random "mo:base/Random";
 import Result "mo:base/Result";
+import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 module {
@@ -25,12 +27,81 @@ module {
 	// -----------------------------------------------------------------
     public type ULID = [Nat8]; // [u8; 16]
 
+	public module ULID = {
+		public func toText(id : ULID) : Text {
+			switch (Text.decodeUtf8(Blob.fromArray([
+				enc[Nat8.toNat((id[0] & 224) >> 5)],
+				enc[Nat8.toNat(id[0] & 31)],
+				enc[Nat8.toNat((id[1] & 248) >> 3)],
+				enc[Nat8.toNat(((id[1] & 7) << 2) | ((id[2] & 192) >> 6))],
+				enc[Nat8.toNat((id[2] & 62) >> 1)],
+				enc[Nat8.toNat(((id[2] & 1) << 4) | ((id[3] & 240) >> 4))],
+				enc[Nat8.toNat(((id[3] & 15) << 1) | ((id[4] & 128) >> 7))],
+				enc[Nat8.toNat((id[4] & 124) >> 2)],
+				enc[Nat8.toNat(((id[4] & 3) << 3) | ((id[5] & 224) >> 5))],
+				enc[Nat8.toNat(id[5] & 31)],
+
+				enc[Nat8.toNat((id[6] & 248) >> 3)],
+				enc[Nat8.toNat(((id[6] & 7) << 2) | ((id[7] & 192) >> 6))],
+				enc[Nat8.toNat((id[7] & 62) >> 1)],
+				enc[Nat8.toNat(((id[7] & 1) << 4) | ((id[8] & 240) >> 4))],
+				enc[Nat8.toNat(((id[8] & 15) << 1) | ((id[9] & 128) >> 7))],
+				enc[Nat8.toNat((id[9] & 124) >> 2)],
+				enc[Nat8.toNat(((id[9] & 3) << 3) | ((id[10] & 224) >> 5))],
+				enc[Nat8.toNat(id[10] & 31)],
+				enc[Nat8.toNat((id[11] & 248) >> 3)],
+				enc[Nat8.toNat(((id[11] & 7) << 2) | ((id[12] & 192) >> 6))],
+				enc[Nat8.toNat((id[12] & 62) >> 1)],
+				enc[Nat8.toNat(((id[12] & 1) << 4)|((id[13] & 240) >> 4))],
+				enc[Nat8.toNat(((id[13] & 15) << 1) | ((id[14] & 128) >> 7))],
+				enc[Nat8.toNat((id[14] & 124) >> 2)],
+				enc[Nat8.toNat(((id[14] & 3) << 3)|((id[15] & 224) >> 5))],
+				enc[Nat8.toNat(id[15] & 31)],
+			]))) {
+				case (? t)  { t };
+				case (null) { assert(false); "" };
+			};
+		};
+
+		private let enc : [Nat8] = [
+			// "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+			48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 
+			71, 72, 74, 75, 77, 78, 80, 81, 82, 83, 84, 86, 87, 88, 89, 90,
+		];
+	};
+
 	// Returns an entropy source that is guaranteed to yield strictly increasing
 	// entropy bytes for the same ULID timestamp. On conflicts, the previous 
 	// ULID entropy is incremented with a random number, [1:increment].
 	public class MonotonicEntropy(
 		increment : Nat64,
 	) {
+		// Returns a new raw ULID based on the current time.
+		public func new() : async ULID {
+			let ms = Nat64.fromNat(Int.abs(Time.now() / 1_000));
+			switch (await monotonicRead(ms)) {
+				case (#err(e)) {
+					// Only on overflows...
+					assert(false);
+					return [];
+				};
+				case (#ok(bs)) {
+					let t : [Nat8] = [
+						byte(ms >> 40),
+						byte(ms >> 32),
+						byte(ms >> 24),
+						byte(ms >> 16),
+						byte(ms >> 8),
+						byte(ms)
+					];
+					Array.tabulate<Nat8>(16, func(i : Nat) : Nat8 {
+						if (i < 6) return t[i];
+						bs[i-6];
+					});
+				};
+			};
+		};
+
 		private let inc : Nat64 = if (increment == 0) {
 			4_294_967_295; // max u32
 		} else { increment };
@@ -40,9 +111,8 @@ module {
 		private var t : Nat64  = 0;
 		private var r : [Nat8] = [];
 
-		public func monotonicRead() : async Result.Result<[Nat8], Text> {
-			let t_ = Nat64.fromNat(Int.abs(Time.now() / 1_000));
-			if (not Nat80.isZero(e) and t == t_) {
+		private func monotonicRead(ms : Nat64) : async Result.Result<[Nat8], Text> {
+			if (not Nat80.isZero(e) and t == ms) {
 				return switch (await updateInc()) {
 					case (#err(e)) { #err(e) };
 					case (#ok()) {
@@ -50,8 +120,8 @@ module {
 					};
 				};
 			};
-			t := t_;
-			let bs = await read(6);
+			t := ms;
+			let bs = await read(10);
 			e := Nat80.new(bs);
 			#ok(bs);
 		};
@@ -103,6 +173,10 @@ module {
 		private func randomNat64() : async Nat64 {
 			let n = await read(8);
 			Binary.BigEndian.toNat64(n);
+		};
+
+		private func byte(n : Nat64) : Nat8 {
+			Nat8.fromNat(Nat64.toNat(n & 0xFF));
 		};
 	};
 
