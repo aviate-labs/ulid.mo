@@ -11,10 +11,10 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 module {
-    // ULID is a 16 byte Universally Unique Lexicographically Sortable Identifier.
-    // Encoded as 16 octets, MSB first.
-    //
-    //  0                   1                   2                   3
+	// ULID is a 16 byte Universally Unique Lexicographically Sortable Identifier.
+	// Encoded as 16 octets, MSB first.
+	//
+	//  0                   1                   2                   3
 	//  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 	// -----------------------------------------------------------------
 	// |                      32_bit_uint_time_high                    |
@@ -25,7 +25,7 @@ module {
 	// -----------------------------------------------------------------
 	// |                       32_bit_uint_random                      |
 	// -----------------------------------------------------------------
-    public type ULID = [Nat8]; // [u8; 16]
+	public type ULID = [Nat8]; // [u8; 16]
 
 	public module ULID = {
 		public func toText(id : ULID) : Text {
