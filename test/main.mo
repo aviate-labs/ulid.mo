@@ -1,9 +1,10 @@
 import Debug "mo:base/Debug";
 
 import ULID "../src/ULID";
+import AsyncSource "../src/async/Source";
 
 actor {
-    private let e = ULID.MonotonicEntropy(0);
+    private let e = AsyncSource.Source(0);
 
     public func new() : async Text {
         let id = await e.new();
