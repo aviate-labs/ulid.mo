@@ -5,6 +5,11 @@ let additions = [
   , repo = "https://github.com/aviate-labs/array.mo"
   , version = "v0.2.0"
   , dependencies = [ "base" ]
-  }
+  },
+  { name = "io"
+  , repo = "https://github.com/aviate-labs/io.mo"
+  , version = "v0.3.0"
+  , dependencies = [ "base" ]
+  },
 ] : List Package
 in  upstream # additions

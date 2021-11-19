@@ -60,24 +60,6 @@ module {
 			#ok(bs);
 		};
 
-		private func read(n : Nat) : async [Nat8] {
-			return if (r.size() == n) {
-				let b = await Random.blob();
-				let bs = r;
-				r := Blob.toArray(b);
-				bs;
-			} else if (r.size() < n) {
-				let b = await Random.blob();
-				let (bs, r_) = Array_.split<Nat8>(Blob.toArray(b), n);
-				r := r_;
-				bs;
-			} else {
-				let (bs, r_) = Array_.split<Nat8>(r, n);
-				r := r_;
-				bs;
-			};
-		};
-
 		private func updateInc() : async Result.Result<(), Text> {
 			let r = await random();
 			switch (Nat80.add(e, r)) {
@@ -107,6 +89,24 @@ module {
 		private func randomNat64() : async Nat64 {
 			let n = await read(8);
 			Binary.BigEndian.toNat64(n);
+		};
+
+		private func read(n : Nat) : async [Nat8] {
+			return if (r.size() == n) {
+				let b = await Random.blob();
+				let bs = r;
+				r := Blob.toArray(b);
+				bs;
+			} else if (r.size() < n) {
+				let b = await Random.blob();
+				let (bs, r_) = Array_.split<Nat8>(Blob.toArray(b), n);
+				r := r_;
+				bs;
+			} else {
+				let (bs, r_) = Array_.split<Nat8>(r, n);
+				r := r_;
+				bs;
+			};
 		};
 	};
 };

@@ -1,4 +1,4 @@
 {
-  dependencies = [ "array", "base", "encoding" ],
-  compiler = Some "0.6.10"
+  dependencies = [ "array", "base", "encoding", "io" ],
+  compiler = Some "0.6.11"
 }
