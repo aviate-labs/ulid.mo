@@ -1,9 +1,8 @@
 import Debug "mo:base/Debug";
+import ULID "mo:ulid/ULID";
+import Source "mo:ulid/Source";
+import AsyncSource "mo:ulid/async/Source";
 import XorShift "mo:rand/XorShift";
-
-import ULID "../src/ULID";
-import Source "../src/Source";
-import AsyncSource "../src/async/Source";
 
 actor {
     private let ae = AsyncSource.Source(0);
@@ -14,12 +13,12 @@ actor {
     public func newAsync() : async Text {
         let id = await ae.new();
         Debug.print(debug_show((id, id.size())));
-        ULID.ULID.toText(id);
+        ULID.toText(id);
     };
 
     public func newSync() : async Text {
         let id = se.new();
         Debug.print(debug_show((id, id.size())));
-        ULID.ULID.toText(id);
+        ULID.toText(id);
     };
 };
