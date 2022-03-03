@@ -20,9 +20,13 @@ module {
 	};
 
 	public func toArray(n : Nat80) : [Nat8] {
-		Array.append<Nat8>(
-			Binary.BigEndian.fromNat16(n.high),
-			Binary.BigEndian.fromNat64(n.low),
+		let h = Binary.BigEndian.fromNat16(n.high);
+		let l = Binary.BigEndian.fromNat64(n.low);
+		Array.tabulate<Nat8>(
+			6, func (i : Nat) : Nat8 {
+				if (i < 2) return h[i];
+				l[i - 2];
+			}
 		);
 	};
 
