@@ -33,7 +33,7 @@ module {
 	public func add(n80 : Nat80, n : Nat64) : Result.Result<Nat80, Text> {
 		var l = n80.low +% n;
 		var h = n80.high;
-		if (n80.low < l) h +%= 1;
+		if (n80.low > l) h +%= 1;
 		if (n80.high > h) return #err("overflow");
 		#ok({ low = l; high = h; });
 	};
