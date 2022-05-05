@@ -23,7 +23,7 @@ module {
 		let h = Binary.BigEndian.fromNat16(n.high);
 		let l = Binary.BigEndian.fromNat64(n.low);
 		Array.tabulate<Nat8>(
-			6, func (i : Nat) : Nat8 {
+			10, func (i : Nat) : Nat8 {
 				if (i < 2) return h[i];
 				l[i - 2];
 			}
@@ -33,8 +33,8 @@ module {
 	public func add(n80 : Nat80, n : Nat64) : Result.Result<Nat80, Text> {
 		var l = n80.low +% n;
 		var h = n80.high;
-		if (n80.low < l) h +%= 1;
-		if (n80.high < h) return #err("overflow");
+		if (n80.low > l) h +%= 1;
+		if (n80.high > h) return #err("overflow");
 		#ok({ low = l; high = h; });
 	};
 
