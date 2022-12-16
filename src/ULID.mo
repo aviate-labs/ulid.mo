@@ -1,6 +1,6 @@
-import Blob "mo:base/Blob";
-import Nat8 "mo:base/Nat8";
-import Text "mo:base/Text";
+import Blob "mo:base-0.7.3/Blob";
+import Nat8 "mo:base-0.7.3/Nat8";
+import Text "mo:base-0.7.3/Text";
 
 module {
     // ULID is a 16 byte Universally Unique Lexicographically Sortable Identifier.

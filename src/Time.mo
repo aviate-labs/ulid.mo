@@ -1,7 +1,7 @@
-import Int "mo:base/Int";
-import Nat8 "mo:base/Nat8";
-import Nat64 "mo:base/Nat64";
-import Time "mo:base/Time";
+import Int "mo:base-0.7.3/Int";
+import Nat8 "mo:base-0.7.3/Nat8";
+import Nat64 "mo:base-0.7.3/Nat64";
+import Time "mo:base-0.7.3/Time";
 
 // Time package, but in milliseconds.
 module {

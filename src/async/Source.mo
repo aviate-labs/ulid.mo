@@ -1,9 +1,9 @@
-import Array "mo:base/Array";
+import Array "mo:base-0.7.3/Array";
 import Array_ "mo:array/Array";
 import Binary "mo:encoding/Binary";
-import Blob "mo:base/Blob";
-import Random "mo:base/Random";
-import Result "mo:base/Result";
+import Blob "mo:base-0.7.3/Blob";
+import Random "mo:base-0.7.3/Random";
+import Result "mo:base-0.7.3/Result";
 
 import Nat80 "../Nat80";
 import ULID "../ULID";

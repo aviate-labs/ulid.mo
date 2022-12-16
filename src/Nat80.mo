@@ -1,7 +1,7 @@
-import Array "mo:base/Array";
+import Array "mo:base-0.7.3/Array";
 import Array_ "mo:array/Array";
 import Binary "mo:encoding/Binary";
-import Result "mo:base/Result";
+import Result "mo:base-0.7.3/Result";
 
 module {
     public let ZERO : Nat80 = { low = 0; high = 0 };

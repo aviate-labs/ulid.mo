@@ -1,7 +1,7 @@
-import Array "mo:base/Array";
+import Array "mo:base-0.7.3/Array";
 import Binary "mo:encoding/Binary";
 import IO "mo:io/IO";
-import Result "mo:base/Result";
+import Result "mo:base-0.7.3/Result";
 
 import Nat80 "Nat80";
 import ULID "ULID";
